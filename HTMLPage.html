@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>俄罗斯方块</title>
+    <style type="text/css">
+        #map{border:3px solid green;background-image:url(images/tetris_grid.gif);float:left;margin-right:20px;}
+        #preview{float:left;}
+        #previewArea{border:2px solid green;width:140px;height:168px;padding-left:28px;}
+        #map td{width:28px;height:28px;}
+        #preview td{width:28px;height:28px;}
+        #perviewTable{margin-top:56px;}
+        #score,#rank{font-size:20px;color:Red;font-weight:bold;}
+    </style>
+    <script type="text/javascript">
+        function Tetris(){}
+        Tetris.prototype={
+            BlogsSetting:[//方块设置
+                [
+                    [1,1,1,1],
+                    [0,0,0,0],
+                    [0,0,0,0],
+                    [0,0,0,0]                 
+                ],
+                [
+                    [1,1,1,0],
+                    [1,0,0,0],
+                    [0,0,0,0], 
+                    [0,0,0,0] 
+                ],
+                [
+                    [1,1,1,0],
+                    [0,1,0,0],
+                    [0,0,0,0], 
+                    [0,0,0,0] 
+                ],
+                [
+                    [1,1,1,0],
+                    [0,0,1,0],
+                    [0,0,0,0], 
+                    [0,0,0,0] 
+                ],
+                [
+                    [1,1,0,0],
+                    [0,1,1,0],
+                    [0,0,0,0], 
+                    [0,0,0,0] 
+                ],
+                [
+                    [0,1,1,0],
+                    [1,1,0,0],
+                    [0,0,0,0], 
+                    [0,0,0,0]
+                ],
+                [
+                    [1,1,0,0],
+                    [1,1,0,0],
+                    [0,0,0,0], 
+                    [0,0,0,0]
+                ]
+            ],
+            GameMap:[],//游戏地图，对应table中的td值
+            BlokWidth:28,//方块集的宽高，也就是images/tetris_grid.gif图片的宽高
+            HorizontalNum:10,//水平td数量
+            VerticalNum:18,//垂直td数量
+            BlokSize:4,//设置方块占用位置4 * 4
+            BlockWidth:0,//获取当前方块的非0的最大宽度
+            BlockHeight:0,//获取当前方块的非0的最大高度
+            CurrentIndex:0,//当前随机获得的索引
+            NextCurrentIndex:0,//获取下一个方块的索引
+            BlokCurrent:[],//当前方块
+            InitPosition:{},//当前方块运动的x,y
+            IsPlay:false,//是否开始游戏
+            IsOver:false,//游戏是否结束
+            IsOverIndex:0,//设置游戏结束的索引还有空几行
+            Score:0,
+            ScoreIndex:100,
+            ColorEnum: [[0, 0], [-28, 0], [-56, 0], [-84, 0], [-112, 0], [-140, 0], [-168, 0], [0, 0]], //颜色的枚举，对应BlogsSetting
+            CreateMap:function(){
+                //加载地图，设置其宽高，根据HorizontalNum,VerticalNum的数量决定
+                var map = document.getElementById("map");
+                var w = this.BlokWidth*this.HorizontalNum;
+                var h = this.BlokWidth*this.VerticalNum;
+                map.style.width=w+"px";
+                map.style.height=h+"px";
+                //加载地图对应的数组，初始化为0，当被占据时为1
+                for(var i=0;i<this.VerticalNum;i++){
+                    this.GameMap.push([]);
+                    for(var j=0;j<this.HorizontalNum;j++){
+                        this.GameMap[i][j]=0;
+                    }
+                }
+                //创建table td填充div根据HorizontalNum,VerticalNum的数量决定，创建HorizontalNum * VerticalNum的表格区域
+                var table = document.createElement("table");
+                table.id="area";
+                var tbody = document.createElement("tbody");
+                table.cellPadding=0;
+                table.cellSpacing=0;
+                table.appendChild(tbody);
+                for(var i=0;i<this.VerticalNum;i++){
+                    var tr = document.createElement("tr");
+                    for(var j=0;j<this.HorizontalNum;j++){
+                        var td = document.createElement("td");
+                        tr.appendChild(td);
+                    }
+                    tbody.appendChild(tr);
+                }
+                map.appendChild(table);
+                this.CreatePreViewMap();
+                this.CreateNextBlock();
+            },            
+            CreatePreViewMap:function(){//加载一个4*4的表格到预览区域
+                var preview = document.getElementById("previewArea");
+                var table = document.createElement("table");
+                table.id="perviewTable";
+                var tbody = document.createElement("tbody");
+                table.cellPadding=0;
+                table.cellSpacing=0;
+                table.appendChild(tbody);
+                for(var i=0;i<this.BlokSize;i++){
+                    var tr = document.createElement("tr");
+                    for(var j=0;j<this.BlokSize;j++){
+                        var td = document.createElement("td");
+                        tr.appendChild(td);
+                    }
+                    tbody.appendChild(tr);
+                }
+                preview.appendChild(table);
+            },
