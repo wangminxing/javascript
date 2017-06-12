@@ -27,8 +27,9 @@
 4.  CanMove:function(x,y){}根据传过来的x,y，检测方块是否能左右下移动
 5.  ClearOldBlok:function(){}每次左右下移动时清除方块，使得重新绘制方块
 6.  MoveRight:function(){}向右移动
+7.  MoveLeft:function(){}   //向左移动
 7.  MoveDown:function(){}向下移动
-8.  ChangeBlock:function(){}方ction(){}创建方块，初始化数据
+8.  ChangeBlock:function(){}向上方块变型
 12.  GameOver:function(){}游戏结束后补齐获得当前方块，补齐地图空白地方
 13.  SettingGameMap:function(){}，设置游戏地图被占有的位置标记为1
 14.  Start:function(){}游戏开始
@@ -37,6 +38,7 @@
 17.  GetWidth:function(blokArr){}获取当前方块不是0的最大宽值
 18.  GetInitPosition:function(){}获取方块的初始位置
 19.  getRandom:function(){}随机获得7种方块中的其中一种
+20.  NewBlock:function(){}//创建方块初始化数据
 20.  getTable:function(){}
 21.  getScore:function(){}
 22.  getRank:function() {}
@@ -49,7 +51,7 @@
 　　←：向左移动
 　　P：暂停或开始游戏 
 # 总体思路 #
-  - 首先用BlogsSetting[]来存放七种类型的方块，用BlokCurrent[]来存放当前的方块。关于游戏的操作放在function KeyDown{}中，然后 function InitGame(){}调用Teris对象的各种函数，来实现游戏。Teris对象的方法和变量如上。游戏开始时，表示游戏开始的IsPlay为true,当前方块的索引为下一个方块的索引，然后根据当前方块的索引来来确定当前方块，获取当前方块的最大非0宽度和高度，调用GetInitPosition(){}方法来获取方块的初始位置（初始位置位置是居中的，y为-1），执行向下移动函数，在执行移动操作时，要进行边界检测和轨迹检测。即是否存在移动过后当前方块的位置x超过游戏地图，且移动时，是否方块的下左右有方块而不能移动的情况，表示方块占据游戏地图的方式是设置GameMap数组的相应位置为1.主要考虑的是方块的移动和方块的变形，和方块的检测及其清行判断。
+  - 首先用BlogsSetting[]来存放七种类型的方块，用BlokCurrent[]来存放当前的方块。关于游戏的操作放在function KeyDown{}中，然后 function InitGame(){}调用Teris对象的各种函数，来实现游戏。Teris对象的方法和变量如上。游戏开始时，表示游戏开始的IsPlay为true,当前方块的索引为下一个方块的索引，然后根据当前方块的索引来来确定当前方块，获取当前方块的最大非0宽度和高度，调用GetInitPosition(){}方法来获取方块的初始位置（初始位置位置是居中的，y为-1），执行向下移动函数，在执行移动操作时，要进行边界检测和轨迹检测。即是否存在移动过后当前方块的位置x+BlockWidth超过游戏地图，且移动时，是否方块的下左右有方块而不能移动的情况，表示方块占据游戏地图的方式是设置GameMap数组的相应位置为1.主要考虑的是方块的移动和方块的变形，和方块的检测及其清行判断。
 # 主要功能及实现思路 #
 1. 方块的运动
    - MoveLeft:function(){}//方块向左运动
